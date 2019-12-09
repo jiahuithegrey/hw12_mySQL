@@ -1,13 +1,11 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var consoleTable = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
-
   port: 3306,
-
   user: "root",
-
   password: "1990Lucky",
   database: "employees"
 });
@@ -18,6 +16,7 @@ connection.connect(function(err) {
   start();
 });
 
+//a constructor function or a class to organize all functions?
 function start(){
     inquirer
     .prompt({
@@ -68,7 +67,7 @@ function start(){
     });
 }
 function viewAllEmp(){
-
+    return consoleTable;
 }
 function addEmp(){
     inquirer
