@@ -38,7 +38,7 @@ function start(){
     .then(function(answer){
         switch (answer.action){
             case "View All Employees":
-                viewEmp();
+                viewAllEmp();
                 break;
             case "View All Employees By Department":
                 viewEmpByDep();
@@ -61,6 +61,89 @@ function start(){
             case "Exit":
                 connection.end();
                 break;
+            // * Delete departments, roles, and employees
+            // * View the total utilized budget of a department -- 
+            //   ie the combined salaries of all employees in that department
         }
     });
+}
+function viewAllEmp(){
+
+}
+function addEmp(){
+    inquirer
+    .prompt(
+        {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "What is the employee's role?",
+            choices: 
+            [
+                "Salesperson",
+                "Lead Engineer",
+                "Software Engineer",
+                "Account NavigationPreloadManager",
+                "Accountant",
+                "Legal Team Lead"
+            ]
+        },
+        {
+            name: "manager",
+            type: "list",
+            message: "Who is the employee's manager?"
+            choices:
+            []
+        }
+    )
+    console.log("Added ${answear.person} to the database.");
+    start();
+    }
+
+function removeEmp(){
+    inquirer
+    .prompt({
+        name: "personToRemoved",
+        type: "list",
+        message: "Which employee would you like to remove?"
+        choices:[]
+    })
+    .then(function(answer){
+
+    })
+    console.log("Removed employee from the database.")
+    start();
+}
+function updateEmpMan(){
+    inquirer.prompt(
+        {
+            name: "employee",
+            type: "list",
+            message: "Which employee's manager do you want to update?",
+            choices: 
+            [
+                
+            ]
+        },
+        {
+            name: "emanager",
+            type: "list",
+            message: "Which employee do you want to set as manager for the selected employee?",
+            choices: 
+            [
+                
+            ]
+        }
+    )
+    console.log("Updated employee's manager");
+    start();
 }
