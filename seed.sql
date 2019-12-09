@@ -11,7 +11,7 @@ CREATE TABLE department (
 
 CREATE TABLE role (
   id INT(30) AUTO_INCREMENT NOT NULL,
-  tilte VARCHAR(30) NOT NULL,
+  title VARCHAR(30) NOT NULL,
   salary DECIMAL(10,2) NULL,
   department_id INT(20) NOT NULL,
   PRIMARY KEY (id)
@@ -37,43 +37,41 @@ INSERT INTO department (name)
 VALUES ("Sales");
 
 -- Build Table role
-INSERT INTO role (tile, salary, department_id)
-VALUES ("Lead Engineer", 150000, ???);
-INSERT INTO role (tile, salary, department_id)
-VALUES ("Software Engineer", 120000, ???);
-INSERT INTO role (tile, salary, department_id)
-VALUES ("Legal Team Lead", 250000, ???);
-INSERT INTO role (tile, salary, department_id)
-VALUES ("Lawyer", 190000, ???);
-INSERT INTO role (tile, salary, department_id)
-VALUES ("Sales Lead", 100000, ???);
-INSERT INTO role (tile, salary, department_id)
-VALUES ("Salesperson", 80000, ???);
-INSERT INTO role (tile, salary, department_id)
-VALUES ("Accountant", 125000, ???);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Lead Engineer", 150000, 1);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Software Engineer", 120000, 1);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Legal Team Lead", 250000, 2);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Lawyer", 190000, 2);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Sales Lead", 100000, 3);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Salesperson", 80000, 3);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Accountant", 125000, 4);
 
 -- Build Table employee
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Harry", "Potter", "Lead Engineer", 1, ?);
+VALUES ("Harry", "Potter", 1, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Hermione", "Granger", "Lead Engineer", 2, ?);
+VALUES ("Hermione", "Granger", 1, 2);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Ron", "Weasley", "Lead Engineer", 3, ?);
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Neville", "Longbottom", "Software Engineer", 3, ?);
+VALUES ("Ron", "Weasley", 2, 2);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Albus", "Dumbledore", "Legal Team Lead", 4, ?);
+VALUES ("Albus", "Dumbledore", 3, 4);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Sirius", "Black", "Lawyer", 5, ?);
+VALUES ("Sirius", "Black", 4, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Charlie", "Weasley", "Sales Lead", 6, ?);
+VALUES ("Charlie", "Weasley", 5, 6);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("George", "Weasley", "Salesperson", 7, ?);
+VALUES ("George", "Weasley", 6, 6);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Ginny", "Weasley", "Accountant", 8, ?);
+VALUES ("Ginny", "Weasley", 7, 8);
 
 
 SELECT * FROM department;
