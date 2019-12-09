@@ -1,0 +1,26 @@
+{
+  "name": "hw12_mySQL",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiahuithegrey/hw12_mySQL.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jiahuithegrey/hw12_mySQL/issues"
+  },
+  "homepage": "https://github.com/jiahuithegrey/hw12_mySQL#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.0.0",
+    "mysql": "^2.17.1"
+  }
+}
