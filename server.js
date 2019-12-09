@@ -1,13 +1,13 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var consoleTable = require("console.table");
+var cTable = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
   password: "1990Lucky",
-  database: "employees"
+  database: "employeesDB"
 });
 
 connection.connect(function(err) {
@@ -66,12 +66,14 @@ function start(){
         }
     });
 }
+// 01 "View All Employees"
 function viewAllEmp(){
-    return consoleTable;
+    console.table(connection.database);
 }
+// 02 "Add Employees"
 function addEmp(){
     inquirer
-    .prompt(
+    .prompt([
         {
             name: "firstName",
             type: "input",
@@ -103,11 +105,24 @@ function addEmp(){
             choices:
             []
         }
-    )
-    console.log("Added ${answear.person} to the database.");
-    start();
+    ])
+    .then (function(answer){
+        connection.query(
+            "INSERT INTO employee SET?",
+            {
+                firstName: answer.first_name,
+                lastName: answer.last_name,
+                role: answer.role,
+                manager: answer.manager
+            }
+        ), function(err,res){
+            if(err) throw err;
+            console.log("Added ${answear.person} to the database.");
+            start();
+        }
+    });
     }
-
+// 05 "Remove Employees"
 function removeEmp(){
     inquirer
     .prompt({
@@ -117,11 +132,17 @@ function removeEmp(){
         choices:[]
     })
     .then(function(answer){
-
-    })
-    console.log("Removed employee from the database.")
-    start();
+        connection.query(
+            "DELETE FROM employee WHERE?",
+            {name: answer.personToRemove}, function(err,res){
+                if(err)throw err;
+                console.log("Removed employee from the database.")
+                start();
+            }
+        );
+    });
 }
+
 function updateEmpMan(){
     inquirer.prompt(
         {
