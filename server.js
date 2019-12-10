@@ -46,7 +46,7 @@ function start(){
                 removeEmp();
                 break;
             case "Update Employee Role":
-                updateEmpRole();
+                updateEmployeeRole();
                 break;
             case "Update Employee Manager":
                 updateEmpMan();
@@ -68,173 +68,205 @@ function start(){
 }
 // 01 "View All Employees"
 function viewAllEmp(){
-    //connection.query("SELECT * FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department department ON employee.department_id = department.id", function(err,res){
-    connection.query("SELECT * FROM employee JOIN (SELECT role.id,role.title,role.salary,department.name FROM role LEFT JOIN department ON role.department_id = department.id) AS rd ON employee.role_id = rd.id",function(err,res){
-        console.table(res)
+    connection.query(
+        "SELECT * FROM employee JOIN (SELECT role.id,role.title,role.salary,department.name FROM role LEFT JOIN department ON role.department_id = department.id) AS rd ON employee.role_id = rd.id",function(err,res){
+        console.table(res);
+        //how to make to table to a new line?
     })
-    //how to use "console.table" to show table from SQL tada?
     start();
 }
 
 // 02 "Add Employees"
 function addEmp(){
-    //is this the right way to select from two tables?
-    connection.query("SELECT * FROM role", function(err,answer){
-        if(err)throw err;
-        inquirer
-        .prompt([
-            {
-                name: "firstName",
-                type: "input",
-                message: "What is the employee's first name?"
-            },
-            {
-                name: "lastName",
-                type: "input",
-                message: "What is the employee's last name?"
-            },
-            {
-                name: "role",
-                type: "list",
-                message: "What is the employee's role?",
-                choices: function(){
+    inquirer
+    .prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "What is the employee's role?",
+            choices: function(){
+                connection.query("SELECT * FROM role", function(err,answer){
+                    if(err)throw err;
                     var roleArray=[];
                     for (var i=0; i<roleArray.length; i++){
                         roleArray.push(answer[i].title);
                     }
                     return roleArray;
-                }
-            },
-            {
-                name: "manager",
-                type: "list",
-                message: "Who is the employee's manager?",
-                choices: function(){
-                    connection.query("SELECT * FROM employee"), function
-                    var managerArray=["none"];
+                });
+            }
+        },
+        {
+            name: "manager",
+            type: "list",
+            message: "Who is the employee's manager?",
+            choices: function(){
+                connection.query("SELECT * FROM employee"), function(err,answer){
+                    if(err)throw err;
+                    var managerArray = ["none"];
                     for (var i=0; i<managerArray.length; i++){
-                        managerArray.push({"fullName": answer[i].first_name + " " + answer[i].last_name });
-                        //how to push both first_name and last_name?
+                        managerArray.push({"fullName": answer[i].first_name + " " + answer[i].last_name});
                         //{key} for objects
                     }
                     return managerArray;
                 }
             }
-        ])
-        .then (function(answer){
-            connection.query(
-                "INSERT INTO employee SET?",
-                {
-                    firstName: answer.first_name,
-                    lastName: answer.last_name,
-                    role: answer.role,
-                    manager: answer.manager
-                }, function(err){
-                    if(err) throw err;
-                    console.log("Added ${answer.first_name}&nbsp${answer.last_name} to the database.");
-                    start();
-                }
-            );
+        }
+    ])
+    .then (function(answer){
+        connection.query(
+            "INSERT INTO employee SET?",
+            {
+                first_name: answer.firstName,
+                last_name: answer.lastName,
+                //how to add title and manager back to table
+                // title: answer.role,
+                // manager: answer.manager
+            }, function(err){
+                if(err) throw err;
+                console.log("Added {answer.firstName}&nbsp${answer.lastName} to the database.");
+                start();
+            })
         });
-    });
-}
+    }
 
 // 03 "Remove Employees"
 function removeEmp(){
-    connection.query("SELECT * FROM employee",function(err,res){
-        if(err)throw err;
-        inquirer
-        .prompt(
-            {
-            name: "personToRemoved",
-            type: "list",
-            message: "Which employee would you like to remove?",
-            choices: function(){
-                var empArray=[];
-                for (var i=0; i<empArray.length; i++){
-                    empArray.push(answer[i].first_name);
+    inquirer
+    .prompt(
+        {
+        name: "personToRemove",
+        type: "list",
+        message: "Which employee would you like to remove?",
+        choices: function(){
+            connection.query("SELECT * FROM employee", function(err,res){
+                if(err)throw err;
+                var employeeArray=[];
+                for (var i=0; i<employeeArray.length; i++){
+                    empArray.push({"fullName": answer[i].first_name + " " + answer[i].last_name});
                 }
-                return managerArray;
+                return employeeArray;
+            });
+        }
+    })
+    .then(function(answer){
+        connection.query(
+            "DELETE FROM employee WHERE?",
+            {name: answer.personToRemove}, function(err,res){
+                if(err)throw err;
+                console.log("Removed employee from the database.");
+                start();
             }
-        })
-        .then(function(answer){
-            connection.query(
-                "DELETE FROM employee WHERE?",
-                {name: answer.personToRemove}, function(err,res){
-                    if(err)throw err;
-                    console.log("Removed employee from the database.");
-                    start();
-                }
-            );
-        });
-    });  
+        );
+    });
 }
 
 // 04 "Update Employee Role"
-// function updateEmpRole(){
-//     connection.query("SELECT * FROM employee",function(err,res){
-//         if(err)throw err;
-//         inquirer
-//         .prompt(
-//             {
-//             name: "personToRemoved",
-//             type: "list",
-//             message: "Which employee would you like to remove?",
-//             choices: function(){
-//                 var empArray=[];
-//                 for (var i=0; i<empArray.length; i++){
-//                     empArray.push(answer[i].(first_name&nbsplast_name));
-//                 }
-//                 return empArray;
-//             }
-//         })
-//         .then(function(answer){
-//             connction.query(
-//                 "UPDATE employee SET? WHERE?",
-//                 [
+function updateEmployeeRole(){
+    inquirer
+    .prompt([
+        {
+        name: "personToRemoved",
+        type: "list",
+        message: "Which employee would you like to remove?",
+        choices: function(){
+            connection.query("SELECT * FROM employee",function(err,res){
+                if(err)throw err;
+                var employeeArray=[];
+                for (var i=0; i<employeeArray.length; i++){
+                    employeeArray.push({"fullName": answer[i].first_name + " " + answer[i].last_name});
+                }
+                return employeeArray;
+            });
+        },
+        {
+            name: "newRole",
+            type: "list",
+            message: "Which role do you want to set for the selected employee?",
+            choices: function(){
+                connection.query("SELECT * FROM role", function(err,answer){
+                    if(err)throw err;
+                    var roleArray = [];
+                    for (var i=0; i<roleArray.length; i++){
+                        roleArray.push(answer.role);
+                    }
+                    return roleArray;
+                });
+            }
+        }
+    ])
+    .then(function(answer){
+        connction.query(
+            "UPDATE employee SET ? WHERE ?",
+            [
+                {employee: answer.firstName},
+                {manager: answer.role}
+            ],
+            function(err,res){
+                if(err)throw err;
+                console.log("Employee role updated!");
+                start();
+            }
+        )
+    });
+}
 
-//                 ],
-//                 function(err,res){
-//                     if(err)throw err;
-//                     console.log("Employee role updated!");
-//                     start();
-//                 }
-//             )
-//         });
-//     });
-// }
-
-// 05 "Update Employees Manager"
-// function updateEmpMan(){
-//     connection.query("SELECT * FROM employee", function(err,answer){
-//         if(err)throw err;
-//         inquirer
-//         .prompt([
-//             {
-//                 name: "employee",
-//                 type: "list",
-//                 message: "Which employee's manager do you want to update?",
-//                 choices: function(){
-//                     var empArray=[];
-//                     for (var i=0; i<empArray.length; i++){
-//                         empArray.push(answer[i].(first_name&nbsplast_name));
-//                     }
-//                     return empArray;
-//                 }
-//             },
-//             {
-//                 name: "newManager",
-//                 type: "list",
-//                 message: "Which employee do you want to set as manager for the selected employee?",
-//                 choices: function(){
-//                     var manArray=[];
-//                     for (var i=0; i<manArray.length; i++){
-//                         manArray.push(answer[i].(first_name&nbsplast_name));
-//                     }
-//                     return manArray;
-//                 }
-//             }
-//         ]);
-//     console.log("Updated employee's manager");
-//     start();
-// }
+//05 "Update Employees Manager"
+function updateEmpMan(){
+    inquirer
+    .prompt([
+        {
+            name: "employee",
+            type: "list",
+            message: "Which employee's manager do you want to update?",
+            choices: function(){
+                connection.query("SELECT * FROM employee", function(err,answer){
+                    if(err)throw err;
+                    var employeeArray=[];
+                    for (var i=0; i<employeeArray.length; i++){
+                        employeeArray.push({"fullName": answer[i].first_name + " " + answer[i].last_name});
+                    }
+                    return employeeArray;
+                });
+            }
+        },
+        {
+            name: "newManager",
+            type: "list",
+            message: "Which employee do you want to set as manager for the selected employee?",
+            choices: function(){
+                connection.query("SELECT * FROM employee", function(err,answer){
+                    if(err)throw err;
+                    var managerArray = [];
+                    for (var i=0; i<managerArray.length; i++){
+                        managerArray.push({"fullName": answer[i].first_name + " " + answer[i].last_name});
+                    }
+                    return managerArray;
+                });
+            }
+        }
+    ])
+    .then(function(answer){
+        var query = connection.query(
+            "UPDATE employee's SET ? WHERE ?",
+            [
+                {employee: answer.firstName},
+                {manager: answer.manger}
+            ],
+            function(err,res){
+                if(err)throw err;
+                console.log("Employee's manager has been updated.");
+                start();
+            }
+        );
+    });
+}
