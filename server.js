@@ -25,12 +25,12 @@ function start(){
         message: "What would you like to do?",
         choices: [
             "View All Employees",
-            "View All Employees By Department",
-            "View All Employees By Manager",
             "Add Employees",
             "Remove Employee",
             "Update Employee Role",
             "Update Employee manager",
+            "View All Employees By Department",
+            "View All Employees By Manager",
             "Exit"
         ]
     })
@@ -38,12 +38,6 @@ function start(){
         switch (answer.action){
             case "View All Employees":
                 viewAllEmp();
-                break;
-            case "View All Employees By Department":
-                viewEmpByDep();
-                break;
-            case "View All Employees By Manager":
-                viewEmpByMan();
                 break;
             case "Add Employee":
                 addEmp();
@@ -56,6 +50,12 @@ function start(){
                 break;
             case "Update Employee Manager":
                 updateEmpMan();
+                break;
+            case "View All Employees By Department":
+                viewEmpByDep();
+                break;
+            case "View All Employees By Manager":
+                viewEmpByMan();
                 break;
             case "Exit":
                 connection.end();
@@ -108,7 +108,7 @@ function addEmp(){
                 choices: function(){
                     var managerArray=["none"];
                     for (var i=0; i<roleArray.length; i++){
-                        managerArray.push(answer[i].(first_name&nbsplast_name));
+                        managerArray.push(answer[i].first_name);
                     }
                     return managerArray;
                 }
@@ -128,23 +128,24 @@ function addEmp(){
                     start();
                 }
             );
-        }
+        });
     });
 }
 
-// 05 "Remove Employees"
+// 03 "Remove Employees"
 function removeEmp(){
     connection.query("SELECT * FROM employee",function(err,res){
         if(err)throw err;
         inquirer
-        .prompt({
+        .prompt(
+            {
             name: "personToRemoved",
             type: "list",
             message: "Which employee would you like to remove?",
             choices: function(){
                 var empArray=[];
                 for (var i=0; i<empArray.length; i++){
-                    empArray.push(answer[i].(first_name&nbsplast_name));
+                    empArray.push(answer[i].first_name);
                 }
                 return managerArray;
             }
@@ -162,27 +163,71 @@ function removeEmp(){
     });  
 }
 
-function updateEmpMan(){
-    inquirer.prompt(
-        {
-            name: "employee",
-            type: "list",
-            message: "Which employee's manager do you want to update?",
-            choices: 
-            [
-                
-            ]
-        },
-        {
-            name: "emanager",
-            type: "list",
-            message: "Which employee do you want to set as manager for the selected employee?",
-            choices: 
-            [
-                
-            ]
-        }
-    )
-    console.log("Updated employee's manager");
-    start();
-}
+// 04 "Update Employee Role"
+// function updateEmpRole(){
+//     connection.query("SELECT * FROM employee",function(err,res){
+//         if(err)throw err;
+//         inquirer
+//         .prompt(
+//             {
+//             name: "personToRemoved",
+//             type: "list",
+//             message: "Which employee would you like to remove?",
+//             choices: function(){
+//                 var empArray=[];
+//                 for (var i=0; i<empArray.length; i++){
+//                     empArray.push(answer[i].(first_name&nbsplast_name));
+//                 }
+//                 return empArray;
+//             }
+//         })
+//         .then(function(answer){
+//             connction.query(
+//                 "UPDATE employee SET? WHERE?",
+//                 [
+
+//                 ],
+//                 function(err,res){
+//                     if(err)throw err;
+//                     console.log("Employee role updated!");
+//                     start();
+//                 }
+//             )
+//         });
+//     });
+// }
+
+// 05 "Update Employees Manager"
+// function updateEmpMan(){
+//     connection.query("SELECT * FROM employee", function(err,answer){
+//         if(err)throw err;
+//         inquirer
+//         .prompt([
+//             {
+//                 name: "employee",
+//                 type: "list",
+//                 message: "Which employee's manager do you want to update?",
+//                 choices: function(){
+//                     var empArray=[];
+//                     for (var i=0; i<empArray.length; i++){
+//                         empArray.push(answer[i].(first_name&nbsplast_name));
+//                     }
+//                     return empArray;
+//                 }
+//             },
+//             {
+//                 name: "newManager",
+//                 type: "list",
+//                 message: "Which employee do you want to set as manager for the selected employee?",
+//                 choices: function(){
+//                     var manArray=[];
+//                     for (var i=0; i<manArray.length; i++){
+//                         manArray.push(answer[i].(first_name&nbsplast_name));
+//                     }
+//                     return manArray;
+//                 }
+//             }
+//         ]);
+//     console.log("Updated employee's manager");
+//     start();
+// }
