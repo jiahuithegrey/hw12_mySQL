@@ -69,78 +69,97 @@ function start(){
 // 01 "View All Employees"
 function viewAllEmp(){
     console.table(connection.database);
+    start();
 }
+
 // 02 "Add Employees"
 function addEmp(){
-    inquirer
-    .prompt([
-        {
-            name: "firstName",
-            type: "input",
-            message: "What is the employee's first name?"
-        },
-        {
-            name: "lastName",
-            type: "input",
-            message: "What is the employee's last name?"
-        },
-        {
-            name: "role",
-            type: "list",
-            message: "What is the employee's role?",
-            choices: 
-            [
-                "Salesperson",
-                "Lead Engineer",
-                "Software Engineer",
-                "Account NavigationPreloadManager",
-                "Accountant",
-                "Legal Team Lead"
-            ]
-        },
-        {
-            name: "manager",
-            type: "list",
-            message: "Who is the employee's manager?"
-            choices:
-            []
-        }
-    ])
-    .then (function(answer){
-        connection.query(
-            "INSERT INTO employee SET?",
+    connection.query("SELECT * FROM employee", function(err,answer){
+        if(err)throw err;
+        inquirer
+        .prompt([
             {
-                firstName: answer.first_name,
-                lastName: answer.last_name,
-                role: answer.role,
-                manager: answer.manager
+                name: "firstName",
+                type: "input",
+                message: "What is the employee's first name?"
+            },
+            {
+                name: "lastName",
+                type: "input",
+                message: "What is the employee's last name?"
+            },
+            {
+                name: "role",
+                type: "list",
+                message: "What is the employee's role?",
+                choices: function(){
+                    var roleArray=[];
+                    for (var i=0; i<roleArray.length; i++){
+                        roleArray.push(answer[i].title);
+                        //is "answer" right?
+                    }
+                    return roleArray;
+                }
+            },
+            {
+                name: "manager",
+                type: "list",
+                message: "Who is the employee's manager?",
+                choices: function(){
+                    var managerArray=["none"];
+                    for (var i=0; i<roleArray.length; i++){
+                        managerArray.push(answer[i].(first_name&nbsplast_name));
+                    }
+                    return managerArray;
+                }
             }
-        ), function(err,res){
-            if(err) throw err;
-            console.log("Added ${answear.person} to the database.");
-            start();
+        ])
+        .then (function(answer){
+            connection.query(
+                "INSERT INTO employee SET?",
+                {
+                    firstName: answer.first_name,
+                    lastName: answer.last_name,
+                    role: answer.role,
+                    manager: answer.manager
+                }, function(err){
+                    if(err) throw err;
+                    console.log("Added ${answer.first_name}&nbsp${answer.last_name} to the database.");
+                    start();
+                }
+            );
         }
     });
-    }
+}
+
 // 05 "Remove Employees"
 function removeEmp(){
-    inquirer
-    .prompt({
-        name: "personToRemoved",
-        type: "list",
-        message: "Which employee would you like to remove?"
-        choices:[]
-    })
-    .then(function(answer){
-        connection.query(
-            "DELETE FROM employee WHERE?",
-            {name: answer.personToRemove}, function(err,res){
-                if(err)throw err;
-                console.log("Removed employee from the database.")
-                start();
+    connection.query("SELECT * FROM employee",function(err,res){
+        if(err)throw err;
+        inquirer
+        .prompt({
+            name: "personToRemoved",
+            type: "list",
+            message: "Which employee would you like to remove?",
+            choices: function(){
+                var empArray=[];
+                for (var i=0; i<empArray.length; i++){
+                    empArray.push(answer[i].(first_name&nbsplast_name));
+                }
+                return managerArray;
             }
-        );
-    });
+        })
+        .then(function(answer){
+            connection.query(
+                "DELETE FROM employee WHERE?",
+                {name: answer.personToRemove}, function(err,res){
+                    if(err)throw err;
+                    console.log("Removed employee from the database.");
+                    start();
+                }
+            );
+        });
+    });  
 }
 
 function updateEmpMan(){
