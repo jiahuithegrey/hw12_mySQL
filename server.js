@@ -68,14 +68,18 @@ function start(){
 }
 // 01 "View All Employees"
 function viewAllEmp(){
-    console.table(connection.database);
+    //connection.query("SELECT * FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department department ON employee.department_id = department.id", function(err,res){
+    connection.query("SELECT * FROM employee JOIN (SELECT role.id,role.title,role.salary,department.name FROM role LEFT JOIN department ON role.department_id = department.id) AS rd ON employee.role_id = rd.id",function(err,res){
+        console.table(res)
+    })
     //how to use "console.table" to show table from SQL tada?
     start();
 }
 
 // 02 "Add Employees"
 function addEmp(){
-    connection.query("SELECT * FROM role", "SELECT * FROM employee", function(err,answer){
+    //is this the right way to select from two tables?
+    connection.query("SELECT * FROM role", function(err,answer){
         if(err)throw err;
         inquirer
         .prompt([
@@ -106,10 +110,12 @@ function addEmp(){
                 type: "list",
                 message: "Who is the employee's manager?",
                 choices: function(){
+                    connection.query("SELECT * FROM employee"), function
                     var managerArray=["none"];
                     for (var i=0; i<managerArray.length; i++){
-                        managerArray.push(answer[i].first_name);
+                        managerArray.push({"fullName": answer[i].first_name + " " + answer[i].last_name });
                         //how to push both first_name and last_name?
+                        //{key} for objects
                     }
                     return managerArray;
                 }
