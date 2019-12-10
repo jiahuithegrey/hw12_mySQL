@@ -69,12 +69,13 @@ function start(){
 // 01 "View All Employees"
 function viewAllEmp(){
     console.table(connection.database);
+    //how to use "console.table" to show table from SQL tada?
     start();
 }
 
 // 02 "Add Employees"
 function addEmp(){
-    connection.query("SELECT * FROM employee", function(err,answer){
+    connection.query("SELECT * FROM role", "SELECT * FROM employee", function(err,answer){
         if(err)throw err;
         inquirer
         .prompt([
@@ -96,7 +97,6 @@ function addEmp(){
                     var roleArray=[];
                     for (var i=0; i<roleArray.length; i++){
                         roleArray.push(answer[i].title);
-                        //is "answer" right?
                     }
                     return roleArray;
                 }
@@ -107,8 +107,9 @@ function addEmp(){
                 message: "Who is the employee's manager?",
                 choices: function(){
                     var managerArray=["none"];
-                    for (var i=0; i<roleArray.length; i++){
+                    for (var i=0; i<managerArray.length; i++){
                         managerArray.push(answer[i].first_name);
+                        //how to push both first_name and last_name?
                     }
                     return managerArray;
                 }

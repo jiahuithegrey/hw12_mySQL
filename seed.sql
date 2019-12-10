@@ -54,26 +54,30 @@ VALUES ("Accountant", 125000, 4);
 
 -- Build Table employee
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Harry", "Potter", 1, 1);
+VALUES ("Harry", "Potter", 1, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Hermione", "Granger", 1, 2);
+VALUES ("Hermione", "Granger", 1, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Ron", "Weasley", 2, 2);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Albus", "Dumbledore", 3, 4);
+VALUES ("Albus", "Dumbledore", 3, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Sirius", "Black", 4, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Charlie", "Weasley", 5, 6);
+VALUES ("Charlie", "Weasley", 5, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("George", "Weasley", 6, 6);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Ginny", "Weasley", 7, 8);
+VALUES ("Ginny", "Weasley", 7, null);
 
 
 SELECT * FROM department;
 SELECT * FROM role;
 SELECT * FROM employee;
+
+SELECT first_name, last_name, role_id FROM employee 
+INNER JOIN role ON role.id = employee.role_id;
+
