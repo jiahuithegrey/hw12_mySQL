@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var cTable = require("console.table");
+var consoleTable = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -41,7 +41,7 @@ function start() {
           viewAllEmployee();
           break;
         case "Add Employees":
-          console.log("call addEmployee)");
+          console.log("call addEmployee");
           addEmployee();
           break;
         case "Remove Employee":
@@ -82,34 +82,41 @@ function viewAllEmployee() {
 
 // 02 "Add Employees"
 function addEmployee() {
-  getRoles();
-  getManagers();
+    let roleArray = [];
+    let managerArray = ["none"];
 
-  function getRoles(cb) {
-    connection.query("SELECT * FROM role", function(err, answer) {
+  function getRoles(callback) {
+    connection.query("SELECT * FROM role", function(err, res) {
       if (err) throw err;
-      var roleArray = [];
       for (var i = 0; i < roleArray.length; i++) {
-        roleArray.push(answer[i].title);
+        roleArray.push(res[i].title);
       }
-     cb(roleArray);
+      callback();
     });
   }
-  function getManagers(cb) {
+  getRoles(roleArray, function() {
+    return roleArray;
+  });
+
+  function getManagers(callback) {
     connection.query("SELECT * FROM employee"),
-      function(err, answer) {
+      function(err, res) {
         if (err) throw err;
-        var managerArray = ["none"];
         for (var i = 0; i < managerArray.length; i++) {
           managerArray.push({
-            fullName: answer[i].first_name + " " + answer[i].last_name
+            fullName: res[i].first_name + " " + res[i].last_name
           }); //{key} for objects
         }
-        cb(managerArray);
+        callback();
       };
   }
+  getManagers(managerArray,function() {
+    return managerArray;
+  });
 
-  function promptToAddEmplyee(roleArray, managerArray) {
+  promptToAddEmployee();
+
+  function promptToAddEmployee(roleArray, managerArray) {
     inquirer
       .prompt([
         {
@@ -155,7 +162,7 @@ function addEmployee() {
         );
       });
   }
-
+}
   // 03 "Remove Employees"
   function removeEmployee() {
     inquirer
@@ -188,7 +195,7 @@ function addEmployee() {
         );
       });
   }
-}
+
 // 04 "Update Employee Role"
 function updateEmployeeRole() {
   inquirer
