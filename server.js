@@ -82,84 +82,81 @@ function viewAllEmployee() {
 
 // 02 "Add Employees"-----------------------------------------
 function addEmployee() {
-    let roleArray = [];
-    let managerArray = ["none"];
+    getRoles(promptToAddEmployee);
+    //async function: run getRoles first, then prompToAddEmp(cb)
+};
 
-  function getRoles(){
+function getRoles(cb){ //cb is promptToAddEmp
     connection.query("SELECT * FROM role", function(err, res) {
-      if (err) throw err;
-      for (var i = 0; i < roleArray.length; i++) {
-        roleArray.push(res[i].title);
-      }
-      
-      promptToAddEmployee(roleArray);
+        let roleArray = [];
+        if (err) throw err;
+        for (var i = 0; i < res.length; i++) {
+            roleArray.push(res[i].title);
+        }
+        cb(roleArray);
+    });
+}
+
+function getManagers(cb) {
+    connection.query("SELECT * FROM employee", function(err, res) {
+        let managerArray = ["none"];
+        if (err) throw err;
+        for (var i = 0; i < res.length; i++) {
+        //   managerArray.push({fullName: res[i].first_name + " " + res[i].last_name}); //{key} for objects
+        managerArray.push(res[i].first_name);
+    }
+    cb(managerArray);
+  });
+}
+
+function promptToAddEmployee(roleArray) {
+    getManagers(function(managerArray) { //what is this function
+        inquirer.prompt([
+            {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?"
+            },
+            {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?"
+            },
+            {
+            name: "role",
+            type: "list",
+            message: "What is the employee's role?",
+            choices: roleArray
+            },
+            {
+            name: "manager",
+            type: "list",
+            message: "Who is the employee's manager?",
+            choices: managerArray
+            }
+        ])
+        .then(function(answer) {
+            connection.query(
+            "INSERT INTO employee SET?",
+            {
+                first_name: answer.firstName,
+                last_name: answer.lastName
+                //how to add title and manager back to table
+                // title: answer.role,
+                // manager: answer.manager
+            },
+            function(err) {
+                if (err) throw err;
+                console.log(
+                "Added {answer.firstName}&nbsp${answer.lastName} to the database."
+                );
+                start();
+            }
+            );
+        });
     });
   }
 
-function getManagers() {
-    connection.query("SELECT * FROM employee", function(err, res) {
-        if (err) throw err;
-        for (var i = 0; i < res.length; i++) {
-            console.log(res[i].first_name);
-          managerArray.push({fullName: res[i].first_name + " " + res[i].last_name}); //{key} for objects
-        }
-    return managerArray;
-  });
-  }
-
-  
-//async , getRoles first, then prompToAddEmployee
-//   getRoles(function(roleArray){
-//       promptToAddEmployee(roleArray);
-//   });
-
-  async function promptToAddEmployee(roleArray, managerArray) {
-    inquirer
-      .prompt([
-        {
-          name: "firstName",
-          type: "input",
-          message: "What is the employee's first name?"
-        },
-        {
-          name: "lastName",
-          type: "input",
-          message: "What is the employee's last name?"
-        },
-        {
-          name: "role",
-          type: "list",
-          message: "What is the employee's role?",
-          choices: roleArray
-        },
-        {
-          name: "manager",
-          type: "list",
-          message: "Who is the employee's manager?",
-          choices: await getManagers()
-        }
-      ])
-      .then(function(answer) {
-        connection.query(
-          "INSERT INTO employee SET?",
-          {
-            first_name: answer.firstName,
-            last_name: answer.lastName
-            //how to add title and manager back to table
-            // title: answer.role,
-            // manager: answer.manager
-          },
-          function(err) {
-            if (err) throw err;
-            console.log(
-              "Added {answer.firstName}&nbsp${answer.lastName} to the database."
-            );
-            start();
-          }
-        );
-      });
-  }
-}
 // 03 "Remove Employees" -----------------------------------------
   function removeEmployee() {
     inquirer
