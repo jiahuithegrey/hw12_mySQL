@@ -57,7 +57,7 @@ function start() {
           viewEmployeeByDepartment();
           break;
         case "View All Employees By Manager":
-          viewEployeeByManager();
+          viewEmployeeByManager();
           break;
         case "Exit":
           connection.end();
@@ -80,7 +80,7 @@ function viewAllEmployee() {
   start();
 }
 
-// 02 "Add Employees"
+// 02 "Add Employees"-----------------------------------------
 function addEmployee() {
     let roleArray = [];
     let managerArray = ["none"];
@@ -91,7 +91,7 @@ function addEmployee() {
       for (var i = 0; i < roleArray.length; i++) {
         roleArray.push(res[i].title);
       }
-      callback();
+      callback(); //is callback a function here????
     });
   }
   getRoles(roleArray, function() {
@@ -103,9 +103,7 @@ function addEmployee() {
       function(err, res) {
         if (err) throw err;
         for (var i = 0; i < managerArray.length; i++) {
-          managerArray.push({
-            fullName: res[i].first_name + " " + res[i].last_name
-          }); //{key} for objects
+          managerArray.push({fullName: res[i].first_name + " " + res[i].last_name}); //{key} for objects
         }
         callback();
       };
@@ -163,7 +161,7 @@ function addEmployee() {
       });
   }
 }
-  // 03 "Remove Employees"
+// 03 "Remove Employees" -----------------------------------------
   function removeEmployee() {
     inquirer
       .prompt({
@@ -196,7 +194,7 @@ function addEmployee() {
       });
   }
 
-// 04 "Update Employee Role"
+// 04 "Update Employee Role" -----------------------------------------
 function updateEmployeeRole() {
   inquirer
     .prompt([
@@ -246,7 +244,7 @@ function updateEmployeeRole() {
     });
 }
 
-//05 "Update Employees Manager"
+//05 "Update Employees Manager" -----------------------------------------
 function updateEmployeeManager() {
   inquirer
     .prompt([
@@ -296,5 +294,41 @@ function updateEmployeeManager() {
           start();
         }
       );
+    });
+}
+//06 "View All Employees By Department" -----------------------------------------
+function viewEmployeeByDepartment(){
+
+}
+
+//07 "View All Employees By Manager" -----------------------------------------
+function getManagerViewEmployee(){
+    connection.query("SELECT * FROM employee", function(err, res) {
+        if (err) throw err;
+        let managerList = [];
+        for (var i = 0; i < managerArray.length; i++) {
+          managerList.push(res[i].manager); //{key} for objects
+        }
+        viewEmployeeByManager(managerList);
+      });
+  }
+  
+function viewEmployeeByManager(){
+    inquirer.prompt(
+        {
+            name: "managerFullName",
+            type: "list",
+            message: "Which manager would you like to pick?",
+            choices: managerList
+        })
+    .then(function(answer){
+        let fullName = answer.managerFullName;
+        let firstName = fullName.split(" ")[0];
+        let lastName = fullName.split(" ") [1];
+        connection.query(select * from employee, function(err,res){
+            if (err) throw err;
+            console.table(res);
+            start();
+        });
     });
 }

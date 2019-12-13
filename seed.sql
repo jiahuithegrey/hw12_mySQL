@@ -71,7 +71,7 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("George", "Weasley", 6, 6);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Ginny", "Weasley", 7, null);
+VALUES ("Luna", "Lovegood", 7, null);
 
 
 SELECT * FROM department;
