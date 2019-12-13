@@ -85,36 +85,35 @@ function addEmployee() {
     let roleArray = [];
     let managerArray = ["none"];
 
-  function getRoles(callback) {
+  function getRoles(){
     connection.query("SELECT * FROM role", function(err, res) {
       if (err) throw err;
       for (var i = 0; i < roleArray.length; i++) {
         roleArray.push(res[i].title);
       }
-      callback(); //is callback a function here????
+      
+      promptToAddEmployee(roleArray);
     });
   }
-  getRoles(roleArray, function() {
-    return roleArray;
-  });
 
-  function getManagers(callback) {
-    connection.query("SELECT * FROM employee"),
-      function(err, res) {
+function getManagers() {
+    connection.query("SELECT * FROM employee", function(err, res) {
         if (err) throw err;
-        for (var i = 0; i < managerArray.length; i++) {
+        for (var i = 0; i < res.length; i++) {
+            console.log(res[i].first_name);
           managerArray.push({fullName: res[i].first_name + " " + res[i].last_name}); //{key} for objects
         }
-        callback();
-      };
-  }
-  getManagers(managerArray,function() {
     return managerArray;
   });
+  }
 
-  promptToAddEmployee();
+  
+//async , getRoles first, then prompToAddEmployee
+//   getRoles(function(roleArray){
+//       promptToAddEmployee(roleArray);
+//   });
 
-  function promptToAddEmployee(roleArray, managerArray) {
+  async function promptToAddEmployee(roleArray, managerArray) {
     inquirer
       .prompt([
         {
@@ -137,7 +136,7 @@ function addEmployee() {
           name: "manager",
           type: "list",
           message: "Who is the employee's manager?",
-          choices: managerArray
+          choices: await getManagers()
         }
       ])
       .then(function(answer) {
@@ -313,22 +312,22 @@ function getManagerViewEmployee(){
       });
   }
   
-function viewEmployeeByManager(){
-    inquirer.prompt(
-        {
-            name: "managerFullName",
-            type: "list",
-            message: "Which manager would you like to pick?",
-            choices: managerList
-        })
-    .then(function(answer){
-        let fullName = answer.managerFullName;
-        let firstName = fullName.split(" ")[0];
-        let lastName = fullName.split(" ") [1];
-        connection.query(select * from employee, function(err,res){
-            if (err) throw err;
-            console.table(res);
-            start();
-        });
-    });
-}
+// function viewEmployeeByManager(){
+//     inquirer.prompt(
+//         {
+//             name: "managerFullName",
+//             type: "list",
+//             message: "Which manager would you like to pick?",
+//             choices: managerList
+//         })
+//     .then(function(answer){
+//         let fullName = answer.managerFullName;
+//         let firstName = fullName.split(" ")[0];
+//         let lastName = fullName.split(" ") [1];
+//         connection.query(select * from employee, function(err,res){
+//             if (err) throw err;
+//             console.table(res);
+//             start();
+//         });
+//     });
+// }
