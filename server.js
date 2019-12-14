@@ -41,7 +41,6 @@ function start() {
           viewAllEmployee();
           break;
         case "Add Employees":
-          console.log("call addEmployee");
           addEmployee();
           break;
         case "Remove Employee":
@@ -102,8 +101,13 @@ function getManagers(cb) {
         let managerArray = ["none"];
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
-        //   managerArray.push({fullName: res[i].first_name + " " + res[i].last_name}); //{key} for objects
-        managerArray.push(res[i].first_name);
+            let managerFirstname = res[i].first_name;
+            let managerLastname = res[i].last_name;
+            let managerFullname = managerFirstname + " " + managerLastname;
+            
+            managerArray.push(managerFullname);
+            //managerArray.push({fullName: res[i].first_name + " " + res[i].last_name}); 
+            //{key} for objects
     }
     cb(managerArray);
   });
