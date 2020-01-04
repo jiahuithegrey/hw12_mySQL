@@ -5,7 +5,7 @@ USE employeesDB;
 
 CREATE TABLE department (
   id INT(30) AUTO_INCREMENT NOT NULL,
-  name VARCHAR(30) NOT NULL,
+  department_name VARCHAR(30) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -15,25 +15,28 @@ CREATE TABLE role (
   salary DECIMAL(10,2) NULL,
   department_id INT(20) NOT NULL,
   PRIMARY KEY (id)
+ 
 );
 
 CREATE TABLE employee (
-  id INT(30) AUTO_INCREMENT NOT NULL,
+  employee_id INT(30) AUTO_INCREMENT NOT NULL,
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
-  role_id INT(30) NOT NULL,
+  role_id INT(30),
   manager_id INT(30) NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (employee_id)
+  -- FOREIGN KEY (role_id) REFERENCES role(id),
+  -- FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
 
 -- Build Table department
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Engineering");
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Finance");
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Legal");
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Sales");
 
 -- Build Table role
@@ -56,19 +59,19 @@ VALUES ("Accountant", 125000, 4);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Harry", "Potter", 1, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Hermione", "Granger", 1, null);
+VALUES ("Hermione", "Granger", 1, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Ron", "Weasley", 2, 2);
+VALUES ("Ron", "Weasley", 2, 3);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Albus", "Dumbledore", 3, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Sirius", "Black", 4, 4);
+VALUES ("Sirius", "Black", 4, 3);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Charlie", "Weasley", 5, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("George", "Weasley", 6, 6);
+VALUES ("George", "Weasley", 6, null);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Luna", "Lovegood", 7, null);
