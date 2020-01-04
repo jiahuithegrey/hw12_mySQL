@@ -25,8 +25,6 @@ CREATE TABLE employee (
   role_id INT(30),
   manager_id INT(30) NULL,
   PRIMARY KEY (employee_id)
-  -- FOREIGN KEY (role_id) REFERENCES role(id),
-  -- FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
 
 -- Build Table department
@@ -59,9 +57,7 @@ VALUES ("Accountant", 125000, 4);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Harry", "Potter", 1, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Hermione", "Granger", 1, 1);
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Ron", "Weasley", 2, 3);
+VALUES ("Ron", "Weasley", 2, 1);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Albus", "Dumbledore", 3, null);
@@ -71,7 +67,7 @@ VALUES ("Sirius", "Black", 4, 3);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Charlie", "Weasley", 5, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("George", "Weasley", 6, null);
+VALUES ("George", "Weasley", 6, 5);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Luna", "Lovegood", 7, null);
