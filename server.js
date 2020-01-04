@@ -233,107 +233,98 @@ function promptToRemoveEmployee(roleArray) {
       });
     }
 // 04 "Update Employee Role" -----------------------------------------
-// function updateEmployeeRole() {
-//   inquirer
-//     .prompt([
-//       {
-//         name: "employeeToRemoved",
-//         type: "list",
-//         message: "Which employee would you like to remove?",
-//         choices: function() {
-//           connection.query("SELECT * FROM employee", function(err, res) {
-//             if (err) throw err;
-//             var employeeArray = [];
-//             for (var i = 0; i < employeeArray.length; i++) {
-//               employeeArray.push({
-//                 fullName: answer[i].first_name + " " + answer[i].last_name
-//               });
-//             }
-//             return employeeArray;
-//           });
-//         }
-//       },
-//       {
-//         name: "newRole",
-//         type: "list",
-//         message: "Which role do you want to set for the selected employee?",
-//         choices: function() {
-//           connection.query("SELECT * FROM role", function(err, answer) {
-//             if (err) throw err;
-//             var roleArray = [];
-//             for (var i = 0; i < roleArray.length; i++) {
-//               roleArray.push(answer.role);
-//             }
-//             return roleArray;
-//           });
-//         }
-//       }
-//     ])
-//     .then(function(answer) {
-//       connction.query(
-//         "UPDATE employee SET ? WHERE ?",
-//         [{ employee: answer.firstName }, { manager: answer.role }],
-//         function(err, res) {
-//           if (err) throw err;
-//           console.log("Employee role updated!");
-//           start();
-//         }
-//       );
-//     });
-// }
+function promptToUpdateEmployee(roleArray) {
+  getAllEmployees(function(employeeArray) {
+  inquirer
+    .prompt([
+      {
+        name: "employeeToUpdate",
+        type: "list",
+        message: "Which employee's role would you like to update?",
+        choices: employeeArray
+        },
+      {
+        name: "newRole",
+        type: "list",
+        message: "Which role do you want to set for the selected employee?",
+        choices: roleArray
+      }
+    ])
+    .then(function(answer) {
+      // console.log(answer);
+      let employeeFullName = answer.employeeToRemove;
+      let employeeFirstName = employeeFullName.split(" ")[0];
+      let employeeLastName = employeeFullName.split(" ")[1];
+      console.log(employeeFirstName);
+      console.log(employeeLastName);
+      connection.query(
+        `SELECT * FROM employee WHERE employee.first_name = "${employeeFirstName}" AND employee.last_name = "${employeeLastName}"`,
+        function(err, res) {
+          if (err) throw err;
+          // console.log(res[0].employee_id);
+          let employeeId = res[0].employee_id;
+
+          connection.query(
+            `SELECT * FROM role WHERE role.title = "${answer.role}"`,
+            function(err, res) {
+              if (err) throw err;
+              // console.table(res);
+              // console.log(res[0].id);
+              let roleId = res[0].id;
+
+          connction.query(
+            "UPDATE employee SET ? WHERE ?",
+            [
+              // find employee by employee id
+              { employee: answer.firstName }, 
+              // find role by role id
+              { manager: answer.role }],
+            function(err, res) {
+              if (err) throw err;
+              console.log("Employee role updated!");
+              start();
+            }
+          );
+        });
+      });
+    });
+}
 
 //05 "Update Employees Manager" -----------------------------------------
-// function updateEmployeeManager() {
-//   inquirer
-//     .prompt([
-//       {
-//         name: "employee",
-//         type: "list",
-//         message: "Which employee's manager do you want to update?",
-//         choices: function() {
-//           connection.query("SELECT * FROM employee", function(err, answer) {
-//             if (err) throw err;
-//             var employeeArray = [];
-//             for (var i = 0; i < employeeArray.length; i++) {
-//               employeeArray.push({
-//                 fullName: answer[i].first_name + " " + answer[i].last_name
-//               });
-//             }
-//             return employeeArray;
-//           });
-//         }
-//       },
-//       {
-//         name: "newManager",
-//         type: "list",
-//         message:
-//           "Which employee do you want to set as manager for the selected employee?",
-//         choices: function() {
-//           connection.query("SELECT * FROM employee", function(err, answer) {
-//             if (err) throw err;
-//             var employeeArray = [];
-//             for (var i = 0; i < employeeArray.length; i++) {
-//               employeeArray.push({
-//                 fullName: answer[i].first_name + " " + answer[i].last_name
-//               });
-//             }
-//             return employeeArray;
-//           });
-//         }
-//       }
-//     ])
-//     .then(function(answer) {
-//       var query = connection.query(
-//         "UPDATE employee's SET ? WHERE ?",
-//         [{ employee: answer.firstName }, { manager: answer.manger }],
-//         function(err, res) {
-//           if (err) throw err;
-//           console.log("Employee's manager has been updated.");
-//           start();
-//         }
-//       );
-//     });
-// }
+function promptToUpdateManger(roleArray) {
+  getAllEmployees(function(employeeArray) {
+  inquirer
+    .prompt([
+      {
+        name: "employeeToUpdate",
+        type: "list",
+        message: "Which employee's manager would you like to update?",
+        choices: employeeArray
+        },
+      {
+        name: "newManager",
+        type: "list",
+        message: "Who do you want to set as the Manager for the selected employee?",
+        choices: employeeArray
+      }
+    ])
+    .then(function(answer) {
+      connction.query(
+        "UPDATE employee SET ? WHERE ?",
+        [
+          // find employee by employee.id
+          { employee: answer.firstName }, 
+          // find manager by manager.id
+          { manager: answer.role }],
+        function(err, res) {
+          if (err) throw err;
+          console.log("Employee role updated!");
+          start();
+        }
+      );
+    });
+  });
+}
 //06 "View All Employees By Department" -----------------------------------------
 // function viewEmployeeByDepartment(){
 
