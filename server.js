@@ -177,7 +177,7 @@ function promptToAddEmployee(roleArray) {
                   function(err) {
                     if (err) throw err;
                     console.log(
-                      `Added ${answer.firstName} + &nbsp + ${answer.lastName} to the database.`
+                      `Added ${answer.firstName} ${answer.lastName} to the database.`
                     );
                     start();
                   }
