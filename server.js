@@ -282,7 +282,11 @@ function promptToUpdateEmployeeRole(roleArray) {
                   function(err, res) {
                     if (err) throw err;
                     console.log(
-                      answer.employeeToUpdate +  " 's role got updated to " + answer.newRole + "!");
+                      answer.employeeToUpdate +
+                        " 's role got updated to " +
+                        answer.newRole +
+                        "!"
+                    );
                     start();
                   }
                 );
@@ -329,15 +333,15 @@ function promptToUpdateEmployeeManager() {
             // console.log(res[0].employee_id);
             let employeeId = res[0].employee_id;
 
-        let managerFullName = answer.newManager;
-        let managerFirstName = managerFullName.split(" ")[0];
-        let managerLastName = managerFullName.split(" ")[1];
-        connection.query(
-          `SELECT * FROM employee WHERE employee.first_name = "${managerFirstName}" AND employee.last_name = "${managerLastName}"`,
-          function(err, res) {
-            if (err) throw err;
-            // console.log(res[0].employee_id);
-            let managerId = res[0].employee_id;
+            let managerFullName = answer.newManager;
+            let managerFirstName = managerFullName.split(" ")[0];
+            let managerLastName = managerFullName.split(" ")[1];
+            connection.query(
+              `SELECT * FROM employee WHERE employee.first_name = "${managerFirstName}" AND employee.last_name = "${managerLastName}"`,
+              function(err, res) {
+                if (err) throw err;
+                // console.log(res[0].employee_id);
+                let managerId = res[0].employee_id;
 
                 connection.query(
                   "UPDATE employee SET ? WHERE ?",
@@ -349,7 +353,10 @@ function promptToUpdateEmployeeManager() {
                   function(err, res) {
                     if (err) throw err;
                     console.log(
-                      answer.employeeToUpdate + " 's manager got updated to " + answer.newManager + "!"
+                      answer.employeeToUpdate +
+                        " 's manager got updated to " +
+                        answer.newManager +
+                        "!"
                     );
                     start();
                   }
@@ -366,12 +373,12 @@ function viewEmployeeByManager() {
   getManagers(promptManager);
 }
 
-function getManagers(cb){
+function getManagers(cb) {
   connection.query("SELECT * FROM employee", function(err, res) {
     let managerArray = [];
     if (err) throw err;
     for (var i = 0; i < res.length; i++) {
-      if (res[i].manager_id === null){
+      if (res[i].manager_id === null) {
         managerArray.push(`${res[i].first_name} ${res[i].last_name}`);
       }
     }
@@ -380,8 +387,7 @@ function getManagers(cb){
   });
 }
 
-function promptManager() {
-  getManagers(function(managerArray) {
+function promptManager(managerArray) {
     inquirer
       .prompt([
         {
@@ -389,7 +395,7 @@ function promptManager() {
           type: "list",
           message: "Whose employee(s) would you like to view?",
           choices: managerArray
-        } 
+        }
       ])
       .then(function(answer) {
         let managerFullName = answer.managerToView;
@@ -402,18 +408,83 @@ function promptManager() {
             // console.log(res[0].employee_id);
             let managerId = res[0].employee_id;
 
-          connection.query(
-            "SELECT * FROM employee WHERE manager_id = ?",
-            managerId,
-            function(err, res) {
-              if (err) throw err;
-              console.log("Employees managed by " + answer.managerToView + " are as shown in the table.");
-              console.table(res);
-              start();
-            }
-          )
+            connection.query(
+              "SELECT * FROM employee WHERE manager_id = ?",
+              managerId,
+              function(err, res) {
+                if (err) throw err;
+                console.log(
+                  "Employees managed by " +
+                    answer.managerToView +
+                    " are as shown in the table."
+                );
+                console.table(res);
+                start();
+              }
+            );
+          }
+        );
+      });
+}
+//07 "View All Employees By Department" -----------------------------------------
+function viewEmployeeByDepartment() {
+  getDepartment(promptDepartment);
+}
+
+function getDepartment(cb) {
+  connection.query("SELECT * FROM department", function(err, res) {
+    let departmentArray = [];
+    if (err) throw err;
+    for (var i = 0; i < res.length; i++) {
+      departmentArray.push(res[i].department_name);
+    }
+    console.log(departmentArray);  
+  });
+  cb(departmentArray);
+}
+
+function promptDepartment() {
+  getDepartment(function(departmentArray) {
+    inquirer
+      .prompt([
+        {
+          name: "department",
+          type: "list",
+          message: "Which department would you like to view?",
+          choices: departmentArray
         }
-      )
-    });
+      ])
+      .then(function(answer) {
+        connection.query(
+          `SELECT * FROM department WHERE department_name = ?`,
+          answer.department,
+          function(err, res) {
+            if (err) throw err;
+            console.log(res[0].department_id);
+            let departmentId = res[0].department_id;
+
+            connection.query(
+              "SELECT * FROM role WHERE department_id = ?",
+              departmentId,
+              function(err, res) {
+                if (err) throw err;
+                let roleID = res[0].id;
+                console.log(roleID);
+
+                connection.query(
+                  "SELECT * FROM department WHERE role_id = ?",
+                  roleID,
+                  function(err, res) {
+                    if (err) throw err;
+                    console.log ("Employees managed by " + answer.managerToView + " are as shown in the table.");
+                    console.table(res);
+                    start();
+                  }
+                );
+              }
+            );
+          }
+        );
+      });
   });
 }
