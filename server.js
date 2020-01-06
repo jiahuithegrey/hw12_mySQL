@@ -279,14 +279,12 @@ function promptToUpdateEmployeeRole(roleArray) {
                 connection.query(
                   "UPDATE employee SET ? WHERE ?",
                   [
-                    { employee_id: employeeId },
-                    { role_id: roleId }
+                    { role_id: roleId },
+                    { employee_id: employeeId }
                   ],
                   function(err, res) {
                     if (err) throw err;
-                    console.log(
-                      "${answer.firstName} ${answer.lastName} role updated!"
-                    );
+                    console.log(answer.employeeToUpdate + " 's role got updated to " + answer.newRole + "!");
                     start();
                   }
                 );
@@ -344,16 +342,13 @@ function promptToUpdateEmployeeManager(roleArray) {
                 connection.query(
                   "UPDATE employee SET ? WHERE ?",
                   [
-                    // find employee by employee id
+                    // order is important!
                     { employee_id: employeeId },
-                    // find role by role id
                     { manager_id: roleId }
                   ],
                   function(err, res) {
                     if (err) throw err;
-                    console.log(
-                      "${answer.firstName} ${answer.lastName} role updated!"
-                    );
+                    console.log("${answer.employeeToUpdate}'s role got updated to !");
                     start();
                   }
                 );
