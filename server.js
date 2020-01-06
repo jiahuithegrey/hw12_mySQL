@@ -366,18 +366,28 @@ function viewEmployeeByManager() {
   getManagers(promptManager);
 }
 
-function getManagers(){
-
+function getManagers(cb){
+  connection.query("SELECT * FROM employee", function(err, res) {
+    let managerArray = [];
+    if (err) throw err;
+    for (var i = 0; i < res.length; i++) {
+      if (res[i].manager_id === null){
+        managerArray.push(`${res[i].first_name} ${res[i].last_name}`);
+      }
+    }
+    //console.log(res);
+    cb(managerArray);
+  });
 }
 
 function promptManager() {
-  getAllEmployees(function(managerArray) {
+  getManagers(function(managerArray) {
     inquirer
       .prompt([
         {
           name: "managerToView",
           type: "list",
-          message: "Which manager's employees would you like to view?",
+          message: "Whose employee(s) would you like to view?",
           choices: managerArray
         } 
       ])
@@ -393,10 +403,12 @@ function promptManager() {
             let managerId = res[0].employee_id;
 
           connection.query(
-            `SELECT * FROM employee WHERE manager_id = mangerId`,
+            "SELECT * FROM employee WHERE manager_id = ?",
+            managerId,
             function(err, res) {
               if (err) throw err;
-              console.log("Employees managed by " + answer.managerToView + " are as follows.");
+              console.log("Employees managed by " + answer.managerToView + " are as shown in the table.");
+              console.table(res);
               start();
             }
           )
