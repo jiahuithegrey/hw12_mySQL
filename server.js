@@ -304,8 +304,7 @@ function updateEmployeeManager() {
   //async function: run getEmployees first, then prompToAddEmp(cb)
 }
 
-function promptToUpdateEmployeeManager() {
-  getAllEmployees(function(employeeArray) {
+function promptToUpdateEmployeeManager(employeeArray) {
     inquirer
       .prompt([
         {
@@ -443,8 +442,7 @@ function getDepartment(cb) {
   cb(departmentArray);
 }
 
-function promptDepartment() {
-  getDepartment(function(departmentArray) {
+function promptDepartment(departmentArray) {
     inquirer
       .prompt([
         {
