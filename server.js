@@ -29,8 +29,8 @@ function start() {
         "Remove Employee",
         "Update Employee Role",
         "Update Employee Manager",
-        "View All Employees By Department",
         "View All Employees By Manager",
+        "View All Employees By Department",
         "Exit"
       ]
     })
@@ -52,11 +52,11 @@ function start() {
         case "Update Employee Manager":
           updateEmployeeManager();
           break;
-        case "View All Employees By Department":
-          viewEmployeeByDepartment();
-          break;
         case "View All Employees By Manager":
           viewEmployeeByManager();
+          break;
+        case "View All Employees By Department":
+          viewEmployeeByDepartment();
           break;
         case "Exit":
           connection.end();
@@ -300,7 +300,7 @@ function updateEmployeeManager() {
   //async function: run getEmployees first, then prompToAddEmp(cb)
 }
 
-function promptToUpdateEmployeeManager(employeeArray) {
+function promptToUpdateEmployeeManager() {
   getAllEmployees(function(employeeArray) {
     inquirer
       .prompt([
@@ -361,39 +361,47 @@ function promptToUpdateEmployeeManager(employeeArray) {
       });
   });
 }
-//06 "View All Employees By Department" -----------------------------------------
-// function viewEmployeeByDepartment(){
+//06 "View All Employees By Manager" -----------------------------------------
+function viewEmployeeByManager() {
+  getManagers(promptManager);
+}
 
-// }
+function getManagers(){
 
-//07 "View All Employees By Manager" -----------------------------------------
-// function getManagerViewEmployee(){
-//     connection.query("SELECT * FROM employee", function(err, res) {
-//         if (err) throw err;
-//         let managerList = [];
-//         for (var i = 0; i < employeeArray.length; i++) {
-//           managerList.push(res[i].manager); //{key} for objects
-//         }
-//         viewEmployeeByManager(managerList);
-//       });
-//   }
+}
 
-// function viewEmployeeByManager(){
-//     inquirer.prompt(
-//         {
-//             name: "managerFullName",
-//             type: "list",
-//             message: "Which manager would you like to pick?",
-//             choices: managerList
-//         })
-//     .then(function(answer){
-//         let fullName = answer.managerFullName;
-//         let firstName = fullName.split(" ")[0];
-//         let lastName = fullName.split(" ") [1];
-//         connection.query(select * from employee, function(err,res){
-//             if (err) throw err;
-//             console.table(res);
-//             start();
-//         });
-//     });
-// }
+function promptManager() {
+  getAllEmployees(function(managerArray) {
+    inquirer
+      .prompt([
+        {
+          name: "managerToView",
+          type: "list",
+          message: "Which manager's employees would you like to view?",
+          choices: managerArray
+        } 
+      ])
+      .then(function(answer) {
+        let managerFullName = answer.managerToView;
+        let managerFirstName = managerFullName.split(" ")[0];
+        let managerLastName = managerFullName.split(" ")[1];
+        connection.query(
+          `SELECT * FROM employee WHERE employee.first_name = "${managerFirstName}" AND employee.last_name = "${managerLastName}"`,
+          function(err, res) {
+            if (err) throw err;
+            // console.log(res[0].employee_id);
+            let managerId = res[0].employee_id;
+
+          connection.query(
+            `SELECT * FROM employee WHERE manager_id = mangerId`,
+            function(err, res) {
+              if (err) throw err;
+              console.log("Employees managed by " + answer.managerToView + " are as follows.");
+              start();
+            }
+          )
+        }
+      )
+    });
+  });
+}
