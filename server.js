@@ -28,7 +28,7 @@ function start() {
         "Add Employees",
         "Remove Employee",
         "Update Employee Role",
-        "Update Employee manager",
+        "Update Employee Manager",
         "View All Employees By Department",
         "View All Employees By Manager",
         "Exit"
@@ -278,13 +278,11 @@ function promptToUpdateEmployeeRole(roleArray) {
 
                 connection.query(
                   "UPDATE employee SET ? WHERE ?",
-                  [
-                    { role_id: roleId },
-                    { employee_id: employeeId }
-                  ],
+                  [{ role_id: roleId }, { employee_id: employeeId }],
                   function(err, res) {
                     if (err) throw err;
-                    console.log(answer.employeeToUpdate + " 's role got updated to " + answer.newRole + "!");
+                    console.log(
+                      answer.employeeToUpdate +  " 's role got updated to " + answer.newRole + "!");
                     start();
                   }
                 );
@@ -298,11 +296,11 @@ function promptToUpdateEmployeeRole(roleArray) {
 
 //05 "Update Employees Manager" -----------------------------------------
 function updateEmployeeManager() {
-  getRoles(promptToUpdateEmployeeManager);
-  //async function: run getRoles first, then prompToAddEmp(cb)
+  getAllEmployees(promptToUpdateEmployeeManager);
+  //async function: run getEmployees first, then prompToAddEmp(cb)
 }
 
-function promptToUpdateEmployeeManager(roleArray) {
+function promptToUpdateEmployeeManager(employeeArray) {
   getAllEmployees(function(employeeArray) {
     inquirer
       .prompt([
@@ -317,7 +315,7 @@ function promptToUpdateEmployeeManager(roleArray) {
           type: "list",
           message:
             "Who do you want to set as the Manager for the selected employee?",
-          choices: employeeArray + null
+          choices: employeeArray
         }
       ])
       .then(function(answer) {
@@ -331,24 +329,28 @@ function promptToUpdateEmployeeManager(roleArray) {
             // console.log(res[0].employee_id);
             let employeeId = res[0].employee_id;
 
-            connection.query(
-              `SELECT * FROM employee WHERE employee.title = "${answer.newManager}"`,
-              function(err, res) {
-                if (err) throw err;
-                // console.table(res);
-                // console.log(res[0].id);
-                let roleId = res[0].id;
+        let managerFullName = answer.newManager;
+        let managerFirstName = managerFullName.split(" ")[0];
+        let managerLastName = managerFullName.split(" ")[1];
+        connection.query(
+          `SELECT * FROM employee WHERE employee.first_name = "${managerFirstName}" AND employee.last_name = "${managerLastName}"`,
+          function(err, res) {
+            if (err) throw err;
+            // console.log(res[0].employee_id);
+            let managerId = res[0].employee_id;
 
                 connection.query(
                   "UPDATE employee SET ? WHERE ?",
                   [
                     // order is important!
-                    { employee_id: employeeId },
-                    { manager_id: roleId }
+                    { manager_id: managerId },
+                    { employee_id: employeeId }
                   ],
                   function(err, res) {
                     if (err) throw err;
-                    console.log("${answer.employeeToUpdate}'s role got updated to !");
+                    console.log(
+                      answer.employeeToUpdate + " 's manager got updated to " + answer.newManager + "!"
+                    );
                     start();
                   }
                 );
