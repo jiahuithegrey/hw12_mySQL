@@ -94,7 +94,7 @@ function getRoles(cb) {
     for (var i = 0; i < res.length; i++) {
       roleArray.push(res[i].title);
     }
-    console.log(res);
+    //console.log(res);
     cb(roleArray);
   });
 }
@@ -215,7 +215,7 @@ function promptToRemoveEmployee(roleArray) {
           `SELECT * FROM employee WHERE employee.first_name = "${employeeFirstName}" AND employee.last_name = "${employeeLastName}"`,
           function(err, res) {
             if (err) throw err;
-            // console.log(res[0].employee_id);
+            console.log(res[0].employee_id);
             let employeeId = res[0].employee_id;
             console.log(employeeId);
             connection.query(
@@ -279,14 +279,14 @@ function promptToUpdateEmployeeRole(roleArray) {
                 connection.query(
                   "UPDATE employee SET ? WHERE ?",
                   [
-                    // find employee by employee id
                     { employee_id: employeeId },
-                    // find role by role id
                     { role_id: roleId }
                   ],
                   function(err, res) {
                     if (err) throw err;
-                    console.log("${answer.firstName} ${answer.lastName} role updated!");
+                    console.log(
+                      "${answer.firstName} ${answer.lastName} role updated!"
+                    );
                     start();
                   }
                 );
@@ -306,60 +306,63 @@ function updateEmployeeManager() {
 
 function promptToUpdateEmployeeManager(roleArray) {
   getAllEmployees(function(employeeArray) {
-  inquirer
-    .prompt([
-      {
-        name: "employeeToUpdate",
-        type: "list",
-        message: "Which employee's manager would you like to update?",
-        choices: employeeArray
+    inquirer
+      .prompt([
+        {
+          name: "employeeToUpdate",
+          type: "list",
+          message: "Which employee's manager would you like to update?",
+          choices: employeeArray
         },
-      {
-        name: "newManager",
-        type: "list",
-        message: "Who do you want to set as the Manager for the selected employee?",
-        choices: employeeArray + null
-      }
-    ])
-    .then(function(answer) {
-      let employeeFullName = answer.employeeToUpdate;
-      let employeeFirstName = employeeFullName.split(" ")[0];
-      let employeeLastName = employeeFullName.split(" ")[1];
-      connection.query(
-        `SELECT * FROM employee WHERE employee.first_name = "${employeeFirstName}" AND employee.last_name = "${employeeLastName}"`,
-        function(err, res) {
-          if (err) throw err;
-          // console.log(res[0].employee_id);
-          let employeeId = res[0].employee_id;
-
-          connection.query(
-            `SELECT * FROM employee WHERE employee.title = "${answer.newManager}"`,
-            function(err, res) {
-              if (err) throw err;
-              // console.table(res);
-              // console.log(res[0].id);
-              let roleId = res[0].id;
-
-              connection.query(
-                "UPDATE employee SET ? WHERE ?",
-                [
-                  // find employee by employee id
-                  { employee_id: employeeId },
-                  // find role by role id
-                  { manager_id: roleId }
-                ],
-                function(err, res) {
-                  if (err) throw err;
-                  console.log("${answer.firstName} ${answer.lastName} role updated!");
-                  start();
-                }
-              );
-            }
-          );
+        {
+          name: "newManager",
+          type: "list",
+          message:
+            "Who do you want to set as the Manager for the selected employee?",
+          choices: employeeArray + null
         }
-      );
-    });
-});
+      ])
+      .then(function(answer) {
+        let employeeFullName = answer.employeeToUpdate;
+        let employeeFirstName = employeeFullName.split(" ")[0];
+        let employeeLastName = employeeFullName.split(" ")[1];
+        connection.query(
+          `SELECT * FROM employee WHERE employee.first_name = "${employeeFirstName}" AND employee.last_name = "${employeeLastName}"`,
+          function(err, res) {
+            if (err) throw err;
+            // console.log(res[0].employee_id);
+            let employeeId = res[0].employee_id;
+
+            connection.query(
+              `SELECT * FROM employee WHERE employee.title = "${answer.newManager}"`,
+              function(err, res) {
+                if (err) throw err;
+                // console.table(res);
+                // console.log(res[0].id);
+                let roleId = res[0].id;
+
+                connection.query(
+                  "UPDATE employee SET ? WHERE ?",
+                  [
+                    // find employee by employee id
+                    { employee_id: employeeId },
+                    // find role by role id
+                    { manager_id: roleId }
+                  ],
+                  function(err, res) {
+                    if (err) throw err;
+                    console.log(
+                      "${answer.firstName} ${answer.lastName} role updated!"
+                    );
+                    start();
+                  }
+                );
+              }
+            );
+          }
+        );
+      });
+  });
 }
 //06 "View All Employees By Department" -----------------------------------------
 // function viewEmployeeByDepartment(){
