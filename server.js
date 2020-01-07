@@ -31,6 +31,7 @@ function start() {
         "Update Employee Manager",
         "View All Employees By Manager",
         "View All Employees By Department",
+        "View Department Budget",
         "Exit"
       ]
     })
@@ -58,12 +59,12 @@ function start() {
         case "View All Employees By Department":
           viewEmployeeByDepartment();
           break;
+        case "View Department Budget": //the combined salaries of all employees in that department
+          viewDepartmentBudget();
+          break;
         case "Exit":
           connection.end();
           break;
-        // * Delete departments, roles, and employees
-        // * View the total utilized budget of a department --
-        //   ie the combined salaries of all employees in that department
       }
     });
 }
@@ -475,3 +476,68 @@ function promptDepartment(departmentArray) {
       );
     });
 }
+//08 View Department Budget -----------------------------------------
+function viewDepartmentBudget() {
+  getDepartment(promptDepartment);
+}
+
+function getDepartment(cb) {
+  connection.query("SELECT * FROM department", function(err, res) {
+    let departmentArray = [];
+    if (err) throw err;
+    for (let i = 0; i < res.length; i++) {
+      departmentArray.push(res[i].department_name);
+    }
+    cb(departmentArray);
+    //console.log(departmentArray);
+  });
+}
+
+function promptDepartment(departmentArray) {
+  inquirer
+    .prompt([
+      {
+        name: "department",
+        type: "list",
+        message: "Which department would you like to view?",
+        choices: departmentArray
+      }
+    ])
+    .then(function(answer) {
+      connection.query(
+        //from department name to department id
+        `SELECT * FROM department WHERE department_name = "${answer.department}"`,
+        function(err, res) {
+          if (err) throw err;
+          console.log(res);
+          let departmentId = res[0].id;
+          console.log(departmentId);
+
+          //from department id to query joined table
+          connection.query(
+            `SELECT * FROM employee JOIN role ON employee.role_id=role.id WHERE department_id = "${departmentId}"`,
+            function(err, res) {
+              if (err) throw err;
+              //console.log(res);
+              console.table(res);
+
+              connection.query(
+                `SELECT * FROM role WHERE department_id = "${departmentId}"`,
+                function(err, res) {
+                  if (err) throw err;
+                  console.log(res);
+                  let budget = 0;
+                  for(i = 0; i<res.length; i++){
+                    budget += res[i].salary;
+                  }
+                  console.log(`${answer.department}'s budget is ${budget}.`);
+                  start();
+                }
+              );
+            }
+          );
+        }
+      );
+    });
+}
+
