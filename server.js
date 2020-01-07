@@ -436,9 +436,9 @@ function getDepartment(cb) {
     for (var i = 0; i < res.length; i++) {
       departmentArray.push(res[i].department_name);
     }
-    console.log(departmentArray);
+    cb(departmentArray);
+    //console.log(departmentArray);
   });
-  cb(departmentArray);
 }
 
 function promptDepartment(departmentArray) {
@@ -453,35 +453,22 @@ function promptDepartment(departmentArray) {
     ])
     .then(function(answer) {
       connection.query(
-        `SELECT * FROM department WHERE department_name = ?`,
-        answer.department,
+        //from department name to department id
+        `SELECT * FROM department WHERE department_name = "${answer.department}"`,
         function(err, res) {
           if (err) throw err;
-          console.log(res[0].department_id);
-          let departmentId = res[0].department_id;
+          console.log(res);
+          let departmentId = res[0].id;
+          console.log(departmentId);
 
+          //from department id to query joined table
           connection.query(
-            "SELECT * FROM role WHERE department_id = ?",
-            departmentId,
+            `SELECT * FROM employee JOIN role ON employee.role_id=role.id WHERE department_id = "${departmentId}"`,
             function(err, res) {
               if (err) throw err;
-              let roleID = res[0].id;
-              console.log(roleID);
-
-              connection.query(
-                "SELECT * FROM department WHERE role_id = ?",
-                roleID,
-                function(err, res) {
-                  if (err) throw err;
-                  console.log(
-                    "Employees managed by " +
-                      answer.managerToView +
-                      " are as shown in the table."
-                  );
-                  console.table(res);
-                  start();
-                }
-              );
+              //console.log(res);
+              console.table(res);
+              start();
             }
           );
         }
