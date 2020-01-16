@@ -509,31 +509,32 @@ function promptDepartment(departmentArray) {
         `SELECT * FROM department WHERE department_name = "${answer.department}"`,
         function(err, res) {
           if (err) throw err;
-          console.log(res);
+          //console.log(res);
           let departmentId = res[0].id;
-          console.log(departmentId);
+          //console.log(departmentId);
 
           //from department id to query joined table
           connection.query(
-            `SELECT * FROM employee JOIN role ON employee.role_id=role.id WHERE department_id = "${departmentId}"`,
+            `SELECT SUM (role.salary) FROM employee JOIN role ON employee.role_id=role.id WHERE department_id = "${departmentId}"`,
             function(err, res) {
               if (err) throw err;
               //console.log(res);
               console.table(res);
 
-              connection.query(
-                `SELECT * FROM role WHERE department_id = "${departmentId}"`,
-                function(err, res) {
-                  if (err) throw err;
-                  console.log(res);
-                  let budget = 0;
-                  for(i = 0; i<res.length; i++){
-                    budget += res[i].salary;
-                  }
-                  console.log(`${answer.department}'s budget is ${budget}.`);
-                  start();
-                }
-              );
+              // connection.query(
+              //   `SELECT * FROM role WHERE department_id = "${departmentId}"`,
+              //   function(err, res) {
+              //     if (err) throw err;
+              //     console.log(res);
+              //     let budget = 0;
+              //     for(i = 0; i<res.length; i++){
+              //       budget += res[i].salary;
+              //     }
+              //     console.log(`${answer.department}'s budget is ${budget}.`);
+              //     start();
+              //     //budget is not working quite right...
+              //   }
+              // );
             }
           );
         }
