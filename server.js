@@ -209,16 +209,16 @@ function promptToRemoveEmployee(roleArray) {
         let employeeFullName = answer.employeeToRemove;
         let employeeFirstName = employeeFullName.split(" ")[0];
         let employeeLastName = employeeFullName.split(" ")[1];
-        console.log(employeeFirstName);
-        console.log(employeeLastName);
+        // console.log(employeeFirstName);
+        // console.log(employeeLastName);
 
         connection.query(
           `SELECT * FROM employee WHERE employee.first_name = "${employeeFirstName}" AND employee.last_name = "${employeeLastName}"`,
           function(err, res) {
             if (err) throw err;
-            console.log(res[0].employee_id);
+            // console.log(res[0].employee_id);
             let employeeId = res[0].employee_id;
-            console.log(employeeId);
+            // console.log(employeeId);
             connection.query(
               "DELETE FROM employee WHERE employee_id = ?",
               employeeId,
@@ -518,8 +518,10 @@ function promptDepartment(departmentArray) {
             `SELECT SUM (role.salary) FROM employee JOIN role ON employee.role_id=role.id WHERE department_id = "${departmentId}"`,
             function(err, res) {
               if (err) throw err;
-              //console.log(res);
+              // console.log(res);
               console.table(res);
+              console.log(`${answer.department} department's budget is ${res}.`);
+              start();
 
               // connection.query(
               //   `SELECT * FROM role WHERE department_id = "${departmentId}"`,
