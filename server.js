@@ -331,6 +331,7 @@ function promptToUpdateEmployeeManager(employeeArray) {
         function(err, res) {
           if (err) throw err;
           // console.log(res[0].employee_id);
+          // console.log(res);
           let employeeId = res[0].employee_id;
 
           let managerFullName = answer.newManager;
