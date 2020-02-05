@@ -427,10 +427,13 @@ function promptManager(managerArray) {
 }
 //07 "View All Employees By Department" -----------------------------------------
 function viewEmployeeByDepartment() {
-  getDepartment(promptDepartment);
+  getDepartment1(promptDepartment1);
+  console.log("1");
+  //async function: run getDepartment first, then promptDepartment(cb)
 }
 
-function getDepartment(cb) {
+function getDepartment1(cb) {
+  console.log("2");
   connection.query("SELECT * FROM department", function(err, res) {
     let departmentArray = [];
     if (err) throw err;
@@ -438,11 +441,10 @@ function getDepartment(cb) {
       departmentArray.push(res[i].department_name);
     }
     cb(departmentArray);
-    //console.log(departmentArray);
   });
 }
 
-function promptDepartment(departmentArray) {
+function promptDepartment1(departmentArray) {
   inquirer
     .prompt([
       {
@@ -489,7 +491,6 @@ function getDepartment(cb) {
       departmentArray.push(res[i].department_name);
     }
     cb(departmentArray);
-    //console.log(departmentArray);
   });
 }
 
@@ -520,7 +521,7 @@ function promptDepartment(departmentArray) {
               if (err) throw err;
               // console.log(res);
               console.table(res);
-              console.log(`${answer.department} department's budget is ${res}.`);
+              // console.log(`${answer.department} department's budget is ${SUM}.`);
               start();
 
               // connection.query(
