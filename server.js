@@ -324,14 +324,19 @@ function promptToUpdateEmployeeManager(employeeArray) {
     ])
     .then(function(answer) {
       let employeeFullName = answer.employeeToUpdate;
-      let employeeFirstName = employeeFullName.split(" ")[0];
-      let employeeLastName = employeeFullName.split(" ")[1];
+      // let employeeLastName = employeeFullName.split(" ")[1];
+      // let employeeLastName = employeeFullName.split(" ")[2]; // Jiahui Wang has 2 spaces
+      let employeeFirstName = employeeFullName.split(/\s+/)[0]; //get rid of all spaces 
+      let employeeLastName = employeeFullName.split(/\s+/)[1];
+      // console.log(employeeFirstName);
+      // console.log(employeeLastName);
       connection.query(
         `SELECT * FROM employee WHERE employee.first_name = "${employeeFirstName}" AND employee.last_name = "${employeeLastName}"`,
         function(err, res) {
-          if (err) throw err;
-          // console.log(res[0].employee_id);
+          if (err) {throw err;}
+          // console.log("test");
           // console.log(res);
+          // console.log(res[0].employee_id);
           let employeeId = res[0].employee_id;
 
           let managerFullName = answer.newManager;
